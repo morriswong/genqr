@@ -45,6 +45,26 @@ const truncateText = (
   return truncated + (truncated !== text ? '...' : '');
 };
 
+const calculateCoverDimensions = (
+  imgWidth: number,
+  imgHeight: number,
+  containerSize: number
+): { sx: number; sy: number; sWidth: number; sHeight: number } => {
+  const imgRatio = imgWidth / imgHeight;
+
+  if (imgRatio > 1) {
+    // Landscape: crop left and right, keep full height
+    const sourceWidth = imgHeight;
+    const sourceX = (imgWidth - sourceWidth) / 2;
+    return { sx: sourceX, sy: 0, sWidth: sourceWidth, sHeight: imgHeight };
+  } else {
+    // Portrait or square: crop top and bottom, keep full width
+    const sourceHeight = imgWidth;
+    const sourceY = (imgHeight - sourceHeight) / 2;
+    return { sx: 0, sy: sourceY, sWidth: imgWidth, sHeight: sourceHeight };
+  }
+};
+
 export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRef }) => {
   const badgeRef = useRef<HTMLDivElement>(null);
   const qrRef = useRef<HTMLDivElement>(null);
@@ -84,8 +104,10 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
         ctx.beginPath();
         ctx.arc(photoCenterX, photoCenterY, photoRadius, 0, Math.PI * 2);
         ctx.clip();
+        const cover = calculateCoverDimensions(img.width, img.height, photoDiameter);
         ctx.drawImage(
           img,
+          cover.sx, cover.sy, cover.sWidth, cover.sHeight,
           photoCenterX - photoRadius,
           photoCenterY - photoRadius,
           photoDiameter,
