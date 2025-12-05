@@ -1,46 +1,70 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { QRCodeDisplay } from './components/QRCodeDisplay';
+import { BadgeDisplay } from './components/BadgeDisplay';
 import { Controls } from './components/Controls';
-import { QRConfig, QRDesignPreset } from './types';
+import { BadgeConfig, BadgeDesignPreset } from './types';
 import { QrCode, Download, ChevronLeft, ChevronRight, Plus, Edit3, ArrowRight } from 'lucide-react';
 
-const PRESETS: QRDesignPreset[] = [
-  { 
-    id: 'classic', 
-    name: 'Classic Mono', 
-    config: { fgColor: '#000000', bgColor: '#ffffff', includeLogo: false },
-    previewColor: '#000000'
+const BADGE_PRESETS: BadgeDesignPreset[] = [
+  {
+    id: 'corporate-blue',
+    name: 'Corporate Blue',
+    badgeColor: '#ffffff',
+    topSectionColor: '#2563eb',
+    qrFgColor: '#2563eb',
+    qrBgColor: '#ffffff',
+    textColor: '#1e293b',
+    previewColor: '#2563eb'
   },
-  { 
-    id: 'midnight', 
-    name: 'Midnight Blue', 
-    config: { fgColor: '#e0e7ff', bgColor: '#1e1b4b', includeLogo: false },
+  {
+    id: 'midnight-pro',
+    name: 'Midnight Pro',
+    badgeColor: '#f8fafc',
+    topSectionColor: '#1e1b4b',
+    qrFgColor: '#1e1b4b',
+    qrBgColor: '#f8fafc',
+    textColor: '#0f172a',
     previewColor: '#1e1b4b'
   },
-  { 
-    id: 'ocean', 
-    name: 'Ocean Depth', 
-    config: { fgColor: '#1e40af', bgColor: '#eff6ff', includeLogo: false },
-    previewColor: '#1e40af'
-  },
-  { 
-    id: 'coral', 
-    name: 'Living Coral', 
-    config: { fgColor: '#ffffff', bgColor: '#be123c', includeLogo: false },
-    previewColor: '#be123c'
-  },
-  { 
-    id: 'forest', 
-    name: 'Deep Forest', 
-    config: { fgColor: '#f0fdf4', bgColor: '#14532d', includeLogo: false },
+  {
+    id: 'forest-green',
+    name: 'Forest Green',
+    badgeColor: '#ffffff',
+    topSectionColor: '#14532d',
+    qrFgColor: '#14532d',
+    qrBgColor: '#ffffff',
+    textColor: '#1e293b',
     previewColor: '#14532d'
   },
-  { 
-    id: 'gold', 
-    name: 'Luxury Gold', 
-    config: { fgColor: '#422006', bgColor: '#fef3c7', includeLogo: true },
-    previewColor: '#d97706'
+  {
+    id: 'coral-red',
+    name: 'Coral Red',
+    badgeColor: '#fff1f2',
+    topSectionColor: '#be123c',
+    qrFgColor: '#be123c',
+    qrBgColor: '#fff1f2',
+    textColor: '#1e293b',
+    previewColor: '#be123c'
   },
+  {
+    id: 'royal-purple',
+    name: 'Royal Purple',
+    badgeColor: '#faf5ff',
+    topSectionColor: '#6b21a8',
+    qrFgColor: '#6b21a8',
+    qrBgColor: '#faf5ff',
+    textColor: '#1e293b',
+    previewColor: '#6b21a8'
+  },
+  {
+    id: 'slate-modern',
+    name: 'Slate Modern',
+    badgeColor: '#ffffff',
+    topSectionColor: '#334155',
+    qrFgColor: '#334155',
+    qrBgColor: '#ffffff',
+    textColor: '#1e293b',
+    previewColor: '#334155'
+  }
 ];
 
 const App: React.FC = () => {
@@ -49,13 +73,19 @@ const App: React.FC = () => {
   const [downloadTrigger, setDownloadTrigger] = useState<(() => void) | null>(null);
 
   // State
-  const [qrConfig, setQrConfig] = useState<QRConfig>({
-    value: "",
-    fgColor: PRESETS[0].config.fgColor || "#000000",
-    bgColor: PRESETS[0].config.bgColor || "#ffffff",
-    size: 300, // internal canvas size
-    level: "Q",
-    includeLogo: PRESETS[0].config.includeLogo || false,
+  const [badgeConfig, setBadgeConfig] = useState<BadgeConfig>({
+    fullName: "",
+    profilePhoto: undefined,
+    qrUrl: "",
+    badgeColor: BADGE_PRESETS[0].badgeColor,
+    topSectionColor: BADGE_PRESETS[0].topSectionColor,
+    qrFgColor: BADGE_PRESETS[0].qrFgColor,
+    qrBgColor: BADGE_PRESETS[0].qrBgColor,
+    textColor: BADGE_PRESETS[0].textColor,
+    badgeWidth: 600,
+    badgeHeight: 840,
+    qrSize: 100,
+    qrLevel: "Q",
   });
 
   // Touch handling for swipe
@@ -81,19 +111,23 @@ const App: React.FC = () => {
   };
 
   const nextPreset = () => {
-    setCurrentPresetIndex((prev) => (prev + 1) % PRESETS.length);
+    setCurrentPresetIndex((prev) => (prev + 1) % BADGE_PRESETS.length);
   };
 
   const prevPreset = () => {
-    setCurrentPresetIndex((prev) => (prev - 1 + PRESETS.length) % PRESETS.length);
+    setCurrentPresetIndex((prev) => (prev - 1 + BADGE_PRESETS.length) % BADGE_PRESETS.length);
   };
 
   // Sync preset with config
   useEffect(() => {
-    const preset = PRESETS[currentPresetIndex];
-    setQrConfig(prev => ({
+    const preset = BADGE_PRESETS[currentPresetIndex];
+    setBadgeConfig(prev => ({
       ...prev,
-      ...preset.config
+      badgeColor: preset.badgeColor,
+      topSectionColor: preset.topSectionColor,
+      qrFgColor: preset.qrFgColor,
+      qrBgColor: preset.qrBgColor,
+      textColor: preset.textColor,
     }));
   }, [currentPresetIndex]);
 
@@ -101,7 +135,7 @@ const App: React.FC = () => {
     if (downloadTrigger) downloadTrigger();
   };
 
-  const currentPreset = PRESETS[currentPresetIndex];
+  const currentPreset = BADGE_PRESETS[currentPresetIndex];
 
   return (
     <div className="h-screen bg-slate-50 flex flex-col overflow-hidden font-sans relative">
@@ -121,8 +155,8 @@ const App: React.FC = () => {
            </div>
            <span className="font-bold text-lg tracking-tight text-slate-800">GenQR</span>
         </div>
-        
-        {qrConfig.value && (
+
+        {(badgeConfig.fullName || badgeConfig.qrUrl) && (
           <button 
             onClick={handleDownloadClick}
             className="flex items-center gap-2 bg-white text-slate-900 px-4 py-2 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all active:scale-95"
@@ -161,8 +195,8 @@ const App: React.FC = () => {
 
             {/* Card Display - Smaller size as requested */}
             <div className="w-64 sm:w-72 flex-shrink-0 transition-transform duration-300">
-               <QRCodeDisplay 
-                  config={qrConfig} 
+               <BadgeDisplay
+                  config={badgeConfig}
                   onDownloadRef={(fn) => setDownloadTrigger(() => fn)}
                />
             </div>
@@ -179,7 +213,7 @@ const App: React.FC = () => {
 
         {/* Carousel Dots */}
         <div className="mt-8 flex gap-2">
-          {PRESETS.map((p, idx) => (
+          {BADGE_PRESETS.map((p, idx) => (
             <button
               key={p.id}
               onClick={() => setCurrentPresetIndex(idx)}
@@ -200,12 +234,14 @@ const App: React.FC = () => {
         >
           <div className="flex items-center gap-4">
              <div className="bg-white/10 p-2 rounded-xl group-hover:bg-white/20 transition-colors">
-               {qrConfig.value ? <Edit3 size={24} /> : <Plus size={24} />}
+               {(badgeConfig.fullName || badgeConfig.qrUrl) ? <Edit3 size={24} /> : <Plus size={24} />}
              </div>
              <div className="text-left">
-               <p className="font-bold text-lg">{qrConfig.value ? "Edit Content" : "Add Content"}</p>
+               <p className="font-bold text-lg">
+                 {(badgeConfig.fullName || badgeConfig.qrUrl) ? "Edit Badge" : "Create Badge"}
+               </p>
                <p className="text-slate-400 text-xs">
-                 {qrConfig.value ? "Change URL or Text" : "Tap to add URL or Text"}
+                 {(badgeConfig.fullName || badgeConfig.qrUrl) ? "Update your badge details" : "Add name, photo, and QR code"}
                </p>
              </div>
           </div>
@@ -214,11 +250,12 @@ const App: React.FC = () => {
       </div>
 
       {/* Overlays */}
-      <Controls 
-        config={qrConfig} 
-        setConfig={setQrConfig} 
+      <Controls
+        config={badgeConfig}
+        setConfig={setBadgeConfig}
         isOpen={isControlsOpen}
         onClose={() => setIsControlsOpen(false)}
+        isBadgeMode={true}
       />
 
     </div>

@@ -24,12 +24,91 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ config, onDownload
     }
   }, []);
 
+  const applyTextOverlay = useCallback(() => {
+    const canvas = qrRef.current?.querySelector('canvas');
+    if (!canvas || !config.overlayText) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const qrSize = config.size;
+    const fontSize = Math.floor(qrSize * 0.12); // 12% of QR size
+    const maxWidth = qrSize * 0.6; // 60% of QR width
+
+    // Configure text
+    ctx.font = `bold ${fontSize}px Inter, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // Truncate text if needed
+    let displayText = config.overlayText;
+    let textWidth = ctx.measureText(displayText).width;
+
+    while (textWidth > maxWidth && displayText.length > 0) {
+      displayText = displayText.slice(0, -1);
+      textWidth = ctx.measureText(displayText + '...').width;
+    }
+    if (displayText !== config.overlayText) {
+      displayText += '...';
+    }
+
+    // Calculate dimensions
+    const finalTextWidth = ctx.measureText(displayText).width;
+    const padding = {
+      x: fontSize * 0.3,
+      y: fontSize * 0.4,
+    };
+    const bgWidth = finalTextWidth + padding.x * 2;
+    const bgHeight = fontSize + padding.y * 2;
+    const centerX = qrSize / 2;
+    const centerY = qrSize / 2;
+    const borderRadius = bgHeight * 0.2;
+
+    // Draw background with rounded corners
+    ctx.fillStyle = config.bgColor === '#ffffff' ? 'rgba(255, 255, 255, 0.95)' : config.bgColor;
+    ctx.beginPath();
+
+    // Check for roundRect support, fallback to regular rect
+    if (typeof ctx.roundRect === 'function') {
+      ctx.roundRect(
+        centerX - bgWidth / 2,
+        centerY - bgHeight / 2,
+        bgWidth,
+        bgHeight,
+        borderRadius
+      );
+    } else {
+      ctx.rect(
+        centerX - bgWidth / 2,
+        centerY - bgHeight / 2,
+        bgWidth,
+        bgHeight
+      );
+    }
+    ctx.fill();
+
+    // Draw text
+    ctx.fillStyle = config.fgColor;
+    ctx.fillText(displayText, centerX, centerY);
+  }, [config.overlayText, config.size, config.bgColor, config.fgColor]);
+
   // Expose download function to parent
   useEffect(() => {
     if (onDownloadRef) {
       onDownloadRef(downloadQR);
     }
   }, [onDownloadRef, downloadQR]);
+
+  // Apply text overlay when config changes
+  useEffect(() => {
+    if (config.overlayEnabled && config.overlayText) {
+      // Wait for canvas to be ready
+      const timeoutId = setTimeout(() => {
+        applyTextOverlay();
+      }, 100);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [config.overlayText, config.overlayEnabled, config.value, config.fgColor, config.bgColor, applyTextOverlay]);
 
   return (
     <div className="w-full flex flex-col items-center justify-center pointer-events-none select-none">
