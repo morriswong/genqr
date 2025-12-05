@@ -1,0 +1,5 @@
+{
+  "name": "GenQR",
+  "description": "An intelligent QR code generator that uses Gemini to convert natural language requests into structured QR formats (WiFi, vCard, etc.), featuring a modern customizable UI.",
+  "requestFramePermissions": []
+}
