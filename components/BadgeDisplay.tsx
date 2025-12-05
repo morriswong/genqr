@@ -63,9 +63,9 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
       if (!ctx) return;
 
       // Calculate section heights (updated to match real badge proportions)
-      const topSectionHeight = config.badgeHeight * 0.48; // 48%
-      const nameSectionHeight = config.badgeHeight * 0.32; // 32%
-      const qrSectionHeight = config.badgeHeight * 0.20; // 20%
+      const topSectionHeight = config.badgeHeight * 0.50; // 50%
+      const nameSectionHeight = config.badgeHeight * 0.25; // 25%
+      const qrSectionHeight = config.badgeHeight * 0.25; // 25%
 
       // 1. Draw top section background
       ctx.fillStyle = config.topSectionColor;
@@ -183,7 +183,7 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
           className="relative flex items-center justify-center"
           style={{
             backgroundColor: config.topSectionColor,
-            height: '48%'
+            height: '50%'
           }}
         >
           <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-lg">
@@ -200,7 +200,7 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
           className="flex flex-col items-center justify-center px-4"
           style={{
             backgroundColor: config.badgeColor,
-            height: '32%'
+            height: '25%'
           }}
         >
           {firstName && (
@@ -230,16 +230,16 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
 
         {/* QR Code Section */}
         <div
-          className="flex items-center justify-center py-3"
+          className="flex items-center justify-center py-8 px-4"
           style={{
             backgroundColor: config.badgeColor,
-            height: '20%'
+            height: '25%'
           }}
         >
           <div ref={qrRef} className="flex items-center justify-center">
             <QRCodeCanvas
               value={config.qrUrl || "https://example.com"}
-              size={64}
+              size={60}
               bgColor={config.qrBgColor}
               fgColor={config.qrFgColor}
               level={config.qrLevel}

@@ -74,7 +74,7 @@ const App: React.FC = () => {
 
   // State
   const [badgeConfig, setBadgeConfig] = useState<BadgeConfig>({
-    fullName: "",
+    fullName: "John Doe",
     profilePhoto: undefined,
     qrUrl: "",
     badgeColor: BADGE_PRESETS[0].badgeColor,
@@ -84,7 +84,7 @@ const App: React.FC = () => {
     textColor: BADGE_PRESETS[0].textColor,
     badgeWidth: 600,
     badgeHeight: 840,
-    qrSize: 100,
+    qrSize: 120,
     qrLevel: "Q",
   });
 
