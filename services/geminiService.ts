@@ -1,12 +1,23 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AIParsedResult } from '../types';
 
-// Initialize Gemini
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Initialize Gemini (lazy initialization to handle missing API key)
+let ai: GoogleGenAI | null = null;
+
+const getAI = () => {
+  if (!ai) {
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error("VITE_GEMINI_API_KEY is not set");
+    }
+    ai = new GoogleGenAI({ apiKey });
+  }
+  return ai;
+};
 
 export const parseNaturalLanguageToQR = async (prompt: string): Promise<AIParsedResult> => {
   try {
-    const response = await ai.models.generateContent({
+    const response = await getAI().models.generateContent({
       model: "gemini-2.5-flash",
       contents: `Interpret this request: "${prompt}" and convert it into the most appropriate structured string format for a QR code. 
       

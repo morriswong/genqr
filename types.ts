@@ -1,7 +1,6 @@
 export enum QRMode {
   TEXT = 'TEXT',
   URL = 'URL',
-  AI_MAGIC = 'AI_MAGIC',
 }
 
 export interface QRConfig {
@@ -18,10 +17,4 @@ export interface QRDesignPreset {
   name: string;
   config: Partial<QRConfig>;
   previewColor: string;
-}
-
-export interface AIParsedResult {
-  type: string;
-  content: string;
-  explanation: string;
 }

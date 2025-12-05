@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { QRConfig, QRMode } from '../types';
-import { Sparkles, Type, Link as LinkIcon, X, Loader2, ArrowRight } from 'lucide-react';
-import { parseNaturalLanguageToQR } from '../services/geminiService';
+import { Type, Link as LinkIcon, X } from 'lucide-react';
 
 interface ControlsProps {
   config: QRConfig;
@@ -12,23 +11,6 @@ interface ControlsProps {
 
 export const Controls: React.FC<ControlsProps> = ({ config, setConfig, isOpen, onClose }) => {
   const [mode, setMode] = useState<QRMode>(QRMode.URL);
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [isAiLoading, setIsAiLoading] = useState(false);
-
-  const handleAiGenerate = async () => {
-    if (!aiPrompt.trim()) return;
-    setIsAiLoading(true);
-    try {
-      const result = await parseNaturalLanguageToQR(aiPrompt);
-      setConfig(prev => ({ ...prev, value: result.content }));
-      // Optional: close on success
-      // onClose();
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsAiLoading(false);
-    }
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setConfig(prev => ({ ...prev, value: e.target.value }));
@@ -62,7 +44,6 @@ export const Controls: React.FC<ControlsProps> = ({ config, setConfig, isOpen, o
             {[
               { id: QRMode.URL, icon: LinkIcon, label: 'URL' },
               { id: QRMode.TEXT, icon: Type, label: 'Text' },
-              { id: QRMode.AI_MAGIC, icon: Sparkles, label: 'AI Magic' },
             ].map((m) => (
               <button
                 key={m.id}
@@ -73,7 +54,7 @@ export const Controls: React.FC<ControlsProps> = ({ config, setConfig, isOpen, o
                     : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
-                <m.icon size={16} className={mode === QRMode.AI_MAGIC ? (m.id === mode ? "text-indigo-500" : "") : ""} />
+                <m.icon size={16} />
                 {m.label}
               </button>
             ))}
@@ -81,45 +62,18 @@ export const Controls: React.FC<ControlsProps> = ({ config, setConfig, isOpen, o
 
           {/* Input Areas */}
           <div className="space-y-4">
-            {mode === QRMode.AI_MAGIC ? (
-              <div className="space-y-3">
-                <div className="relative">
-                  <textarea
-                    value={aiPrompt}
-                    onChange={(e) => setAiPrompt(e.target.value)}
-                    placeholder="Describe it: 'Wifi for Guest, pass 1234'..."
-                    className="w-full h-32 p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none text-slate-700 text-base"
-                    autoFocus
-                  />
-                  <div className="absolute bottom-3 right-3">
-                    <button
-                      onClick={handleAiGenerate}
-                      disabled={isAiLoading || !aiPrompt.trim()}
-                      className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 transition-all shadow-lg shadow-indigo-200"
-                    >
-                      {isAiLoading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
-                      Generate
-                    </button>
-                  </div>
-                </div>
-                <p className="text-xs text-slate-400 px-2">
-                  Powered by Gemini. We'll format your request automatically.
-                </p>
+            <div className="space-y-3">
+              <div className="relative flex items-center">
+                <input
+                  type={mode === QRMode.URL ? 'url' : 'text'}
+                  value={config.value}
+                  onChange={handleInputChange}
+                  placeholder={mode === QRMode.URL ? 'https://example.com' : 'Enter your text here...'}
+                  className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none text-slate-700 text-lg"
+                  autoFocus
+                />
               </div>
-            ) : (
-              <div className="space-y-3">
-                <div className="relative flex items-center">
-                  <input
-                    type={mode === QRMode.URL ? 'url' : 'text'}
-                    value={config.value}
-                    onChange={handleInputChange}
-                    placeholder={mode === QRMode.URL ? 'https://example.com' : 'Enter your text here...'}
-                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none text-slate-700 text-lg"
-                    autoFocus
-                  />
-                </div>
-              </div>
-            )}
+            </div>
           </div>
 
           {/* Action Button */}

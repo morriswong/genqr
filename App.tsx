@@ -205,7 +205,7 @@ const App: React.FC = () => {
              <div className="text-left">
                <p className="font-bold text-lg">{qrConfig.value ? "Edit Content" : "Add Content"}</p>
                <p className="text-slate-400 text-xs">
-                 {qrConfig.value ? "Change URL or Text" : "Tap to add URL, Text, or AI prompt"}
+                 {qrConfig.value ? "Change URL or Text" : "Tap to add URL or Text"}
                </p>
              </div>
           </div>
