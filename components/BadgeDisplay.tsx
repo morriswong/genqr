@@ -75,7 +75,7 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
       const photoSrc = config.profilePhoto || DEFAULT_PROFILE_PHOTO;
       try {
         const img = await loadImage(photoSrc);
-        const photoDiameter = 100;
+        const photoDiameter = 125;
         const photoRadius = photoDiameter / 2;
         const photoCenterX = config.badgeWidth / 2;
         const photoCenterY = topSectionHeight / 2;
@@ -118,7 +118,7 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
 
       if (firstName) {
         // Draw first name (bold, larger)
-        ctx.font = 'bold 30px Inter, sans-serif';
+        ctx.font = 'bold 38px Inter, sans-serif';
         ctx.textBaseline = 'middle';
         const truncatedFirstName = truncateText(ctx, firstName.toUpperCase(), config.badgeWidth * 0.85);
         const firstNameY = lastName ? nameSectionCenter - 12 : nameSectionCenter;
@@ -126,7 +126,7 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
 
         // Draw last name (regular, smaller)
         if (lastName) {
-          ctx.font = '18px Inter, sans-serif';
+          ctx.font = '22px Inter, sans-serif';
           const truncatedLastName = truncateText(ctx, lastName, config.badgeWidth * 0.85);
           ctx.fillText(truncatedLastName, nameCenterX, nameSectionCenter + 15);
         }
@@ -240,7 +240,7 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
           <div ref={qrRef} className="flex items-center justify-center w-full h-full">
             <QRCodeCanvas
               value={config.qrUrl || "https://example.com"}
-              size={120}
+              size={150}
               bgColor={config.qrBgColor}
               fgColor={config.qrFgColor}
               level={config.qrLevel}
