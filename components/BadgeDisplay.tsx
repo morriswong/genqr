@@ -63,9 +63,9 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
       if (!ctx) return;
 
       // Calculate section heights (updated to match real badge proportions)
-      const topSectionHeight = config.badgeHeight * 0.50; // 50%
-      const nameSectionHeight = config.badgeHeight * 0.25; // 25%
-      const qrSectionHeight = config.badgeHeight * 0.25; // 25%
+      const topSectionHeight = config.badgeHeight * 0.30; // 30%
+      const nameSectionHeight = config.badgeHeight * 0.15; // 15%
+      const qrSectionHeight = config.badgeHeight * 0.55; // 55%
 
       // 1. Draw top section background
       ctx.fillStyle = config.topSectionColor;
@@ -75,7 +75,7 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
       const photoSrc = config.profilePhoto || DEFAULT_PROFILE_PHOTO;
       try {
         const img = await loadImage(photoSrc);
-        const photoDiameter = 180;
+        const photoDiameter = 100;
         const photoRadius = photoDiameter / 2;
         const photoCenterX = config.badgeWidth / 2;
         const photoCenterY = topSectionHeight / 2;
@@ -95,7 +95,7 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
 
         // Add white border around photo
         ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 6;
+        ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.arc(photoCenterX, photoCenterY, photoRadius, 0, Math.PI * 2);
         ctx.stroke();
@@ -118,17 +118,17 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
 
       if (firstName) {
         // Draw first name (bold, larger)
-        ctx.font = 'bold 48px Inter, sans-serif';
+        ctx.font = 'bold 30px Inter, sans-serif';
         ctx.textBaseline = 'middle';
         const truncatedFirstName = truncateText(ctx, firstName.toUpperCase(), config.badgeWidth * 0.85);
-        const firstNameY = lastName ? nameSectionCenter - 25 : nameSectionCenter;
+        const firstNameY = lastName ? nameSectionCenter - 12 : nameSectionCenter;
         ctx.fillText(truncatedFirstName, nameCenterX, firstNameY);
 
         // Draw last name (regular, smaller)
         if (lastName) {
-          ctx.font = '28px Inter, sans-serif';
+          ctx.font = '18px Inter, sans-serif';
           const truncatedLastName = truncateText(ctx, lastName, config.badgeWidth * 0.85);
-          ctx.fillText(truncatedLastName, nameCenterX, nameSectionCenter + 30);
+          ctx.fillText(truncatedLastName, nameCenterX, nameSectionCenter + 15);
         }
       }
 
@@ -183,10 +183,10 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
           className="relative flex items-center justify-center"
           style={{
             backgroundColor: config.topSectionColor,
-            height: '50%'
+            height: '30%'
           }}
         >
-          <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-lg">
+          <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow-lg">
             <img
               src={photoSrc}
               alt="Profile"
@@ -200,7 +200,7 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
           className="flex flex-col items-center justify-center px-4"
           style={{
             backgroundColor: config.badgeColor,
-            height: '25%'
+            height: '15%'
           }}
         >
           {firstName && (
@@ -213,8 +213,8 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
               </h1>
               {lastName && (
                 <h2
-                  className="text-base font-normal truncate w-full text-center mt-1"
-                  style={{ color: config.textColor }}
+                  className="text-xs font-normal truncate w-full text-center"
+                  style={{ color: config.textColor, fontSize: '1rem' }}
                 >
                   {lastName}
                 </h2>
@@ -222,7 +222,7 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
             </>
           )}
           {!firstName && (
-            <p className="text-sm opacity-50" style={{ color: config.textColor }}>
+            <p className="text-xs opacity-50" style={{ color: config.textColor }}>
               Add your name
             </p>
           )}
@@ -230,16 +230,17 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
 
         {/* QR Code Section */}
         <div
-          className="flex items-center justify-center py-8 px-4"
+          className="flex items-center justify-center px-4"
           style={{
             backgroundColor: config.badgeColor,
-            height: '25%'
+            height: '55%',
+            padding: '12px'
           }}
         >
-          <div ref={qrRef} className="flex items-center justify-center">
+          <div ref={qrRef} className="flex items-center justify-center w-full h-full">
             <QRCodeCanvas
               value={config.qrUrl || "https://example.com"}
-              size={60}
+              size={120}
               bgColor={config.qrBgColor}
               fgColor={config.qrFgColor}
               level={config.qrLevel}
