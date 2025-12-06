@@ -144,14 +144,14 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
         ctx.font = 'bold 38px Inter, sans-serif';
         ctx.textBaseline = 'middle';
         const truncatedFirstName = truncateText(ctx, firstName.toUpperCase(), config.badgeWidth * 0.85);
-        const firstNameY = lastName ? nameSectionCenter - 12 : nameSectionCenter;
+        const firstNameY = lastName ? nameSectionCenter - 15 : nameSectionCenter;
         ctx.fillText(truncatedFirstName, nameCenterX, firstNameY);
 
         // Draw last name (regular, smaller)
         if (lastName) {
           ctx.font = '22px Inter, sans-serif';
           const truncatedLastName = truncateText(ctx, lastName, config.badgeWidth * 0.85);
-          ctx.fillText(truncatedLastName, nameCenterX, nameSectionCenter + 15);
+          ctx.fillText(truncatedLastName, nameCenterX, nameSectionCenter + 10);
         }
       }
 
@@ -222,7 +222,7 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
 
         {/* Name Section */}
         <div
-          className="flex flex-col items-center justify-center px-4"
+          className="flex flex-col items-center justify-center px-4 pb-2"
           style={{
             backgroundColor: config.badgeColor,
             height: '15%'
