@@ -166,7 +166,8 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
         // Scale QR code proportionally to match display (150px on 256px = 58.6%)
         const scaledQrSize = config.badgeWidth * 0.586;
         const qrX = (config.badgeWidth - scaledQrSize) / 2;
-        const qrY = qrSectionTop + (qrSectionHeight - scaledQrSize) / 2;
+        const qrTopPadding = 20; // Add extra top padding for spacing
+        const qrY = qrSectionTop + qrTopPadding + (qrSectionHeight - scaledQrSize - qrTopPadding) / 2;
         ctx.drawImage(qrCanvas, qrX, qrY, scaledQrSize, scaledQrSize);
       }
 
@@ -222,7 +223,7 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
 
         {/* Name Section */}
         <div
-          className="flex flex-col items-center justify-center px-4 pb-2"
+          className="flex flex-col items-center justify-center px-4 pb-4"
           style={{
             backgroundColor: config.badgeColor,
             height: '15%'
@@ -255,11 +256,13 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
 
         {/* QR Code Section */}
         <div
-          className="flex items-center justify-center px-4"
+          className="flex items-center justify-center px-4 pt-4"
           style={{
             backgroundColor: config.badgeColor,
             height: '55%',
-            padding: '12px'
+            paddingLeft: '12px',
+            paddingRight: '12px',
+            paddingBottom: '12px'
           }}
         >
           <div ref={qrRef} className="flex items-center justify-center w-full h-full">
