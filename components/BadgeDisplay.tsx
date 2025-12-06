@@ -144,14 +144,14 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
         ctx.font = 'bold 38px Inter, sans-serif';
         ctx.textBaseline = 'middle';
         const truncatedFirstName = truncateText(ctx, firstName.toUpperCase(), config.badgeWidth * 0.85);
-        const firstNameY = lastName ? nameSectionCenter - 15 : nameSectionCenter;
+        const firstNameY = lastName ? nameSectionCenter - 18 : nameSectionCenter;
         ctx.fillText(truncatedFirstName, nameCenterX, firstNameY);
 
         // Draw last name (regular, smaller)
         if (lastName) {
           ctx.font = '22px Inter, sans-serif';
           const truncatedLastName = truncateText(ctx, lastName, config.badgeWidth * 0.85);
-          ctx.fillText(truncatedLastName, nameCenterX, nameSectionCenter + 10);
+          ctx.fillText(truncatedLastName, nameCenterX, nameSectionCenter + 12);
         }
       }
 
@@ -166,8 +166,7 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
         // Scale QR code proportionally to match display (150px on 256px = 58.6%)
         const scaledQrSize = config.badgeWidth * 0.586;
         const qrX = (config.badgeWidth - scaledQrSize) / 2;
-        const qrTopPadding = 20; // Add extra top padding for spacing
-        const qrY = qrSectionTop + qrTopPadding + (qrSectionHeight - scaledQrSize - qrTopPadding) / 2;
+        const qrY = qrSectionTop + (qrSectionHeight - scaledQrSize) / 2;
         ctx.drawImage(qrCanvas, qrX, qrY, scaledQrSize, scaledQrSize);
       }
 
@@ -223,7 +222,7 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
 
         {/* Name Section */}
         <div
-          className="flex flex-col items-center justify-center px-4 pb-4"
+          className="flex flex-col items-center justify-center px-4 gap-0.5"
           style={{
             backgroundColor: config.badgeColor,
             height: '15%'
@@ -232,14 +231,14 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
           {firstName && (
             <>
               <h1
-                className="text-2xl font-bold uppercase truncate w-full text-center leading-tight"
+                className="text-2xl font-bold uppercase truncate w-full text-center leading-normal"
                 style={{ color: config.textColor }}
               >
                 {firstName}
               </h1>
               {lastName && (
                 <h2
-                  className="text-xs font-normal truncate w-full text-center"
+                  className="text-xs font-normal truncate w-full text-center leading-relaxed"
                   style={{ color: config.textColor, fontSize: '1rem' }}
                 >
                   {lastName}
@@ -256,13 +255,11 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
 
         {/* QR Code Section */}
         <div
-          className="flex items-center justify-center px-4 pt-4"
+          className="flex items-center justify-center px-4"
           style={{
             backgroundColor: config.badgeColor,
             height: '55%',
-            paddingLeft: '12px',
-            paddingRight: '12px',
-            paddingBottom: '12px'
+            padding: '12px'
           }}
         >
           <div ref={qrRef} className="flex items-center justify-center w-full h-full">
