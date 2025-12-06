@@ -95,7 +95,8 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
       const photoSrc = config.profilePhoto || DEFAULT_PROFILE_PHOTO;
       try {
         const img = await loadImage(photoSrc);
-        const photoDiameter = 125;
+        // Scale photo proportionally to match display (64px on 256px = 25%)
+        const photoDiameter = config.badgeWidth * 0.25;
         const photoRadius = photoDiameter / 2;
         const photoCenterX = config.badgeWidth / 2;
         const photoCenterY = topSectionHeight / 2;
@@ -162,9 +163,11 @@ export const BadgeDisplay: React.FC<BadgeDisplayProps> = ({ config, onDownloadRe
       // 6. Draw QR code
       const qrCanvas = qrRef.current?.querySelector('canvas');
       if (qrCanvas) {
-        const qrX = (config.badgeWidth - config.qrSize) / 2;
-        const qrY = qrSectionTop + (qrSectionHeight - config.qrSize) / 2;
-        ctx.drawImage(qrCanvas, qrX, qrY, config.qrSize, config.qrSize);
+        // Scale QR code proportionally to match display (150px on 256px = 58.6%)
+        const scaledQrSize = config.badgeWidth * 0.586;
+        const qrX = (config.badgeWidth - scaledQrSize) / 2;
+        const qrY = qrSectionTop + (qrSectionHeight - scaledQrSize) / 2;
+        ctx.drawImage(qrCanvas, qrX, qrY, scaledQrSize, scaledQrSize);
       }
 
       // 7. Export as PNG
