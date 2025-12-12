@@ -1,0 +1,44 @@
+steps:
+  # Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/genqr/$REPO_NAME/genqr:$COMMIT_SHA'
+      - '-t'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/genqr/$REPO_NAME/genqr:latest'
+      - '.'
+    id: 'Build'
+
+  # Push the Docker image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '--all-tags'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/genqr/$REPO_NAME/genqr'
+    id: 'Push'
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'services'
+      - 'update'
+      - 'genqr'
+      - '--platform=managed'
+      - '--image=europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/genqr/$REPO_NAME/genqr:$COMMIT_SHA'
+      - '--region=europe-west1'
+      - '--quiet'
+    id: 'Deploy'
+
+images:
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/genqr/$REPO_NAME/genqr:$COMMIT_SHA'
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/genqr/$REPO_NAME/genqr:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+tags:
+  - 'gcp-cloud-build-deploy-cloud-run'
+  - 'genqr'
